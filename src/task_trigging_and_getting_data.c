@@ -1,12 +1,12 @@
 /*
- * task_trigging_and_getting_data.c Sends 10us pulse to the ultrasonic sound sensor to
+ * task_trigging_and_getting_data.c Sends 10us(500 clock cycls) pulse to the ultrasonic sound sensor to
  *  activate it and then process the echo pulse coming back from sensor
  *
  *  Created on: Oct 13, 2020
  *      Author: Saif
  *
  *
- * ************ pseudo code *******************
+ * ***************** pseudo code ******************************
  *
  *		initiate function period time;
  *		set pin 13 as output;
@@ -19,7 +19,7 @@
  *			process_incoming_echo_signals();
  *
  *		}
- *****************************************************************************************************************/
+ ************************************************************/
 
 #include <altera_avalon_sierra_ker.h>
 #include <altera_avalon_sierra_io.h>
@@ -43,31 +43,27 @@ void task_trigging_and_getting_data_code(void){
 	/*This function initializes the period time for the calling task. The period time = 50 which gives 1s.
 	Inititialize period time for current task.*/
 	init_period_time(50);
-	//task_periodic_start_union test; //for test of deadline miss
+	//task_periodic_start_union test; //for deadline miss tests
 		
 	//initiating pin modes for Arduino headers. Should one set all the othe unused input and outputs to unused mode?
 	//should these initiations be in the main func??
 	arduino_pin_mode(PIN_D13, PIN_OUTPUT); //set output pin mode (trig pin)
 	arduino_pin_mode(PIN_D11, PIN_INPUT); //set input pin mode (echo pin)
 	
-	//arduino_digital_write(PIN_D11,SIGNAL_LOW);//cant write a digital input
-	
 	while(1)
 	{
 		wait_for_next_period();
 
 		/*This function suspends the calling task until the start of next period time. Let current task wait for next period.*/
-/*		test=wait_for_next_period(); //Every second. If there is deadline miss test=1
+		/*test=wait_for_next_period(); //Every second. If there is deadline miss test=1
 		if(test.periodic_start_integer & 0x01)
 			alt_printf("deadline miss, trigging_and_getting_data\n");*/
-
-		//sem_take(sem1);
 		
 		delay_60ms();
 
 		trigg_hcsr04_sensor();
 
-		sem_take(SEMAPHORE);
+		sem_take(SEMAPHORE); //semaphores for protecting critical tasks
 		process_incoming_echo_signals();
 		sem_release(SEMAPHORE);
 
@@ -107,10 +103,9 @@ void process_incoming_echo_signals(){
 
 	TIMER_RESET();
 	
-
 	//no echo
 	while(arduino_digital_read(PIN_D11) == SIGNAL_LOW){
-		//if the total time the program spending here is long maybe indicate out of range
+	//if the total time the program spending here is long maybe indicate out of range
 		;
 	}
  
