@@ -1,22 +1,22 @@
 /*
  * This program is a sensore interaface for HC-SR04 ultra sound distance measurement sensor.
  * The program start with printing the engineer's name, date of the project.
- * When a user push button 0 the RTOS Sierra starts to execute four different tasks to start distance measurement,
- * calculation of the measured distance and showing the result on vga-monitor.
+ * When a user push button key_0 on the DE10-Lite board the RTOS Sierra starts to execute four different tasks.
+ * the tasks will initiate the sensorn to start measuring distance to an obsticle and showing the result on vga-monitor.
  *
- * The memory footprint of this hosted application is ~69 kbytes by default
- * using the standard reference design.
+ * The memory footprint of this hosted application is ~30 kbytes with the optimizations that was done on the system.
  *
- *
+ *********************** pseudo code *******************
+ 
  *		initiate Sierra;
  *
- *		clear screen;
+ *		clear screen();
  *
  *		while(!is_key0_pressed){
  *			init_vga();
  *		}
  *
- *		clear screen;
+ *		clear screen();
  *
  *		set Sierra time base;
  *		declare all tasks;
@@ -27,7 +27,7 @@
  *		}
  *
  *
- ******************************************************************************************************************/
+ ***************************************************************/
 
 #include <altera_avalon_sierra_ker.h>
 #include <altera_avalon_sierra_io.h>
@@ -44,15 +44,15 @@
 #include "task_display_on_vga.h"
 #include "task_processing_data.h"
 #include "init_vga.h"
-#include "is_key_pressed.h" //for function is_key0_pressed()
+#include "is_key_pressed.h"
 #include "main.h"
 
 
 //tasks in the system
-#define Task_trigging_and_getting_data 3    //Highest priority. Runs every second
-#define Task_processing_data 2				//Runs every second
-#define Task_display_on_vga 1				//Runs every second
-#define Task_idle 0    						//Priority 0. Not allowed to be in blocked state.
+#define Task_trigging_and_getting_data 3	//Highest priority. Runs every second
+#define Task_processing_data 2			//Runs every second
+#define Task_display_on_vga 1			//Runs every second
+#define Task_idle 0    				//Priority 0. Not allowed to be in blocked state.
 
 // define global variables
 extern alt_u32 echo_signal_length;
@@ -60,8 +60,7 @@ extern alt_u16 measured_distance;
 
 
 alt_u32 timer_value;
-//93074641
-//93074430
+
 
 // TASK STACKS. Every task has its own stack.
 #define STACK_SIZE 800
@@ -69,14 +68,6 @@ char idle_stack[STACK_SIZE];
 char trigging_and_getting_data_stack[STACK_SIZE];
 char processing_data_stack[STACK_SIZE];
 char display_on_vga_stack[STACK_SIZE];
-
-
-/*		TIMER_RESET();
-		TIMER_START();
-
-		timer_value = TIMER_READ();
-		printf("TIMER VALUE = %d\n",timer_value );
-		TIMER_STOP();*/
 
 /*----------------------------Main---------------------------------------*/
 int main (void){
@@ -97,13 +88,7 @@ int main (void){
 	clear_screen(0x000);
 
 	while(!is_key0_pressed()){
-		//init_vga();
-		TIMER_RESET();
-		TIMER_START();
 		init_vga();
-		timer_value = TIMER_READ();
-		printf("TIMER VALUE = %d\n",timer_value );
-		TIMER_STOP();
 	}
 
 	clear_screen(0x000);
