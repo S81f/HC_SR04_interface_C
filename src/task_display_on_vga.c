@@ -14,7 +14,7 @@
  *
  *		}
  *
- *****************************************************************************************************************/
+ ***********************************************/
 
 #include <altera_avalon_sierra_ker.h>
 #include <altera_avalon_sierra_io.h>
@@ -27,18 +27,17 @@
 
 
 alt_u16 measured_distance;
-/*********************************************************************************************************
-* 
-* *********************************************************************************************************/
+
+
 void task_display_on_vga_code(void){
 
 
-	/*Argument (hera 50) Specifies the period time, in number of ticks, for calling task.
+	/*Argument (here 50) specifies the period time, in number of ticks, for calling task.
 	* 50*0.02= 1sec
 	*/
 	init_period_time(50); // one second period time
 
-	// test to check if there is deadline miss
+	// variable test for deadline miss
 	//task_periodic_start_union test;
 
 
@@ -47,7 +46,7 @@ void task_display_on_vga_code(void){
 
 		wait_for_next_period();
 
-/*		test=wait_for_next_period();
+		/*test=wait_for_next_period();
 		if(test.periodic_start_integer & 0x01)
 			alt_printf("deadline miss, display_on_vga\n");*/
 
