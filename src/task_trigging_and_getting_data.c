@@ -33,8 +33,8 @@
 
 
 
-//global vari can be optimize by using volatile
-alt_u32 echo_signal_length;//save total clock cycles during higt echo signal
+
+alt_u32 echo_signal_length;//save total clock cycles during high echo signal
 
 
 void task_trigging_and_getting_data_code(void){
@@ -98,7 +98,6 @@ void trigg_hcsr04_sensor(){
 * function to detect incoming echo from sensor and calculate the
 * number of clock cycle during high echo signal
 */
-
 void process_incoming_echo_signals(){
 
 	TIMER_RESET();
